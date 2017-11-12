@@ -115,6 +115,7 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
         public void remove() {
             throw new UnsupportedOperationException();
         }
+
     }
 
     @NotNull
@@ -139,7 +140,8 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
     @Override
     public SortedSet<T> subSet(T fromElement, T toElement) {
         if (fromElement.compareTo(toElement) > 0) throw new IllegalArgumentException();
-        return subSet(fromElement, toElement, new TreeSet<>(), root, false);
+        return Collections.synchronizedSortedSet
+                (subSet(first(), last(), new TreeSet<>(), root, true)).subSet(fromElement, toElement);
     }
 
     public SortedSet<T> subSet(T fromElement, T toElement, SortedSet<T> newSet, Node<T> currentRoot, boolean needLast) {
@@ -161,6 +163,7 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
     @NotNull
     @Override
     public SortedSet<T> headSet(T toElement) {
+        if (toElement.compareTo(first()) < 0) throw new IllegalArgumentException();
         return subSet(first(), toElement);
     }
 
